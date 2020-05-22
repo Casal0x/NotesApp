@@ -29,13 +29,15 @@ authCtrl.signUp = async (req, res) => {
     const savedUser = await user.save();
     savedUser.password = undefined;
 
-    const activationToken = await jwt.sign({ _id: user._id }, SECRET_KEY);
+    const activationToken = await jwt.sign({ _id: user._id }, SECRET_KEY, {
+      expiresIn: '1h',
+    });
 
     const message = `
-    <h1>Note App</h1>
-    <h3> Activate your account! </h3>
-    <a href="${WEBSITE}${activationToken}" target="_blank"> Click HERE! </a>
-  `;
+      <h1>Note App</h1>
+      <h3> Activate your account! </h3>
+      <a href="${WEBSITE}${activationToken}" target="_blank"> Click HERE! </a>
+    `;
 
     const mailOptions = {
       from: 'Notes App <dontreply@casalox.com>',
@@ -51,6 +53,7 @@ authCtrl.signUp = async (req, res) => {
     res.json({
       status: SUCCESS,
       user: savedUser,
+      activationToken,
     });
   } catch (error) {
     res.json({
@@ -81,15 +84,22 @@ authCtrl.signIn = async (req, res) => {
     });
   }
 
+  if (!user.status) {
+    return res.json({
+      status: ERROR,
+      message: 'User inactive',
+    });
+  }
+
   const correctPassword = await user.validatePassword(password);
   if (!correctPassword) {
-    res.json({
+    return res.json({
       status: ERROR,
       message: 'Username/Email or Password incorrect',
     });
   }
 
-  const token = jwt.sign({ _id: user._id }, SECRET_KEY, {
+  const token = await jwt.sign({ _id: user._id }, SECRET_KEY, {
     expiresIn: '1h', //60 * 60 * 24
   });
 
@@ -239,7 +249,7 @@ authCtrl.profile = async (req, res) => {
 authCtrl.updateProfile = async (req, res) => {
   const { _id } = req;
   try {
-    await User.findByIdAndUpdate(_id, req.body);
+    await User.updateOne({ _id }, req.body);
     const user = await User.findOne({ _id }, { password: 0 });
 
     res.json({
@@ -251,6 +261,24 @@ authCtrl.updateProfile = async (req, res) => {
     res.json({
       status: ERROR,
       msg: "Couldn't update the profile",
+      error,
+    });
+  }
+};
+
+authCtrl.activateUser = async (req, res) => {
+  const { _id } = req;
+
+  try {
+    await User.updateOne({ _id }, { status: 1 });
+
+    res.json({
+      status: SUCCESS,
+      message: 'User activated',
+    });
+  } catch (error) {
+    res.json({
+      status: ERROR,
       error,
     });
   }

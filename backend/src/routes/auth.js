@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const TokenValidation = require('../libs/TokenValidation');
 const {
+  activateUser,
   signUp,
   signIn,
   profile,
@@ -12,6 +13,7 @@ const {
 
 router.get('/restore-password', restorePassword);
 router.get('/profile', TokenValidation, profile);
+router.get('/activate-user', TokenValidation, activateUser);
 
 router.post('/signup', signUp);
 router.post('/signin', signIn);

@@ -2,8 +2,6 @@
 
 backend/node_modules
 backend/.env
-backend/yarn.lock
-backend/package-lock.json
 
 # FRONT END
 frontend/node_modules
@@ -24,6 +22,5 @@ frontend/.env.test.local
 frontend/.env.production.local
 
 frontend/npm-debug.log*
-frontend/yarn.lock
 frontend/yarn-debug.log*
 frontend/yarn-error.log*

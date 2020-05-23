@@ -1,5 +1,10 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+//pages
+import HomePage from './pages/HomePage';
+import Test from './testPages/Test';
+import TestWithHooks from './testPages/TestWithHooks';
 
 function App() {
   return (

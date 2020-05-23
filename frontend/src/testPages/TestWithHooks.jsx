@@ -1,21 +1,17 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { addTestItem } from "../store/actions/testActions";
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addTestItem } from '../store/actions/testActions';
 
 const Test = (props) => {
   const testData = useSelector((state) => state.test.testData);
   const dispatch = useDispatch();
 
-  const getRandom = () => {
-    return Math.floor(Math.random() * 100);
-  };
-
   const addRandomItem = () => {
     dispatch(
       addTestItem({
-        id: getRandom(),
-        title: "ADDED NEW TEST",
-        description: "DESC",
+        id: Math.floor(Math.random() * 100),
+        title: 'ADDED NEW TEST',
+        description: 'DESC',
       })
     );
   };
@@ -23,6 +19,7 @@ const Test = (props) => {
   return (
     <div>
       <h1>Test Page</h1>
+      <button onClick={addRandomItem}> Add Random Item</button>
       <ul>
         {testData &&
           testData.map((item) => {
@@ -33,8 +30,6 @@ const Test = (props) => {
             );
           })}
       </ul>
-
-      <button onClick={() => addRandomItem()}> Add Random Item</button>
     </div>
   );
 };
